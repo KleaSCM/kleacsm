@@ -1,36 +1,24 @@
-// import Site from '../components/Site';
-// import Klea from '../components/Klea';
-// import Sylvanas from '../components/Sylvanas';
-// import styles from '../styles/Datasets.module.scss';
-
-// const Datasets = () => {
-//   return (
-//     <div className={styles.container}>
-//       <div className={styles.tableContainer}>
-//         <Site />
-//         <Klea />
-//         <Sylvanas />
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default Datasets;
 
 
-///////////////////////////////////////////////
+import React, { useState } from 'react';
+import FileUploader from '../components/FileUploader';
+import CurrentActiveCaseload from '../components/CurrentActiveCaseload';
+import JobSeekerServicingType from '../components/JobSeekerServicingType';
 
+const IndexPage = () => {
+    const [clientsData, setClientsData] = useState<any[]>([]);
 
-import React from 'react';
-import SiteTable from '../components/SiteTable';
+    const handleDataParsed = (data: any[]) => {
+        setClientsData(data);
+    };
 
-const HomePage = () => {
-  return (
-    <div>
-      <h1>SUB216 Data</h1>
-      <SiteTable />
-    </div>
-  );
+    return (
+        <div>
+            <FileUploader onDataParsed={handleDataParsed} />
+            <CurrentActiveCaseload clientsData={clientsData} />
+            <JobSeekerServicingType clientsData={clientsData} />
+        </div>
+    );
 };
 
-export default HomePage;
+export default IndexPage;

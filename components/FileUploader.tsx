@@ -1,36 +1,35 @@
-import React, { useState } from 'react';
+import React from 'react';
 import * as XLSX from 'xlsx';
 
-const FileUploader = ({ onDataParsed }: { onDataParsed: (data: any) => void }) => {
-  const [fileName, setFileName] = useState<string | null>(null);
+const FileUploader: React.FC<{ onDataParsed: (data: any[]) => void }> = ({ onDataParsed }) => {
+    const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const data = new Uint8Array(e.target?.result as ArrayBuffer);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheetName = workbook.SheetNames[0];
+                const worksheet: any[][] = XLSX.utils.sheet_to_json(workbook.Sheets[sheetName], { header: 1 });
 
-  const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFileName(file.name);
+                const headers = worksheet[0]; // This will be an array of headers
+                const rawData = worksheet.slice(1); // The actual data, skipping headers row
+                const parsedData = rawData.map((row: any[]) => {
+                    const obj: any = {};
+                    headers.forEach((header, index) => {
+                        obj[header] = row[index]; // Map each row's data to the header
+                    });
+                    return obj;
+                });
 
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const data = new Uint8Array(e.target?.result as ArrayBuffer);
-        const workbook = XLSX.read(data, { type: 'array' });
+                console.log("Parsed Data:", parsedData);
+                onDataParsed(parsedData); // Pass parsed data to parent component
+            };
+            reader.readAsArrayBuffer(file);
+        }
+    };
 
-       
-        const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        
-        // Pass the parsed data to the parent component
-        onDataParsed(jsonData);
-      };
-      reader.readAsArrayBuffer(file);
-    }
-  };
-
-  return (
-    <div>
-      <input type="file" accept=".xlsx, .xls" onChange={handleFileUpload} />
-      {fileName && <p>Uploaded: {fileName}</p>}
-    </div>
-  );
+    return <input type="file" onChange={handleFileUpload} />;
 };
 
 export default FileUploader;

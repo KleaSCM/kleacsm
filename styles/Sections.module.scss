@@ -1,0 +1,26 @@
+
+
+.caseloadSection {
+    padding: 20px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    margin-top: 20px;
+
+    h2 {
+        font-size: 1.5em;
+        margin-bottom: 10px;
+    }
+
+    .tableRow {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+
+        .tableCell {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            text-align: center;
+        }
+    }
+}
